@@ -1,5 +1,5 @@
 TEST?=$$(go list ./...)
-GOFMT_FILES?=$$(find . -name '*.go')
+GOFMT_FILES?=$$(find openstack -name '*.go')
 WEBSITE_REPO=github.com/hashicorp/terraform-website
 PKG_NAME=openstack
 
@@ -57,4 +57,3 @@ endif
 	@$(MAKE) -C $(GOPATH)/src/$(WEBSITE_REPO) website-provider-test PROVIDER_PATH=$(shell pwd) PROVIDER_NAME=$(PKG_NAME)
 
 .PHONY: build test testacc vet fmt fmtcheck errcheck test-compile website website-test
-
