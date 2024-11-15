@@ -1,3 +1,10 @@
+## Unreleased
+
+IMPROVEMENTS
+
+* Added a new `openstack_workflow_workflow_v2` resource ([#1820](https://github.com/terraform-provider-openstack/terraform-provider-openstack/pull/1820))
+* Added a new `openstack_workflow_workflow_v2` data source ([#1813](https://github.com/terraform-provider-openstack/terraform-provider-openstack/pull/1813))
+
 ## 3.0.0 ( 25 September, 2024 )
 
 NOTES
