@@ -69,7 +69,7 @@ resource "openstack_workflow_cron_trigger_v2" "cron_trigger_1" {
   }
 }
 
-data "openstack_workflow_workflow_v2" "cron_trigger_1" {
+data "openstack_workflow_cron_trigger_v2" "cron_trigger_1" {
 	name = "cron_trigger_1"
 }
 `, workflowID)
