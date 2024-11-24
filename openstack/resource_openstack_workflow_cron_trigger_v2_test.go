@@ -42,19 +42,13 @@ func TestAccWorkflowV2CronTrigger_basic(t *testing.T) {
 					resource.TestCheckResourceAttrSet(
 						"openstack_workflow_cron_trigger_v2.cron_trigger_1", "id"),
 					resource.TestCheckResourceAttr(
-						"openstack_workflow_cron_trigger_v2.cron_trigger_1", "name", "my_workflow"),
+						"openstack_workflow_cron_trigger_v2.cron_trigger_1", "name", "cron_trigger_1"),
 					resource.TestCheckResourceAttr(
 						"openstack_workflow_cron_trigger_v2.cron_trigger_1", "workflow_id", workflowID),
 					resource.TestCheckResourceAttr(
 						"openstack_workflow_cron_trigger_v2.cron_trigger_1", "pattern", "0 5 * * *"),
 					resource.TestCheckResourceAttr(
-						"openstack_workflow_cron_trigger_v2.cron_trigger_1", "workflow_params", "0 5 * * *"),
-					resource.TestCheckResourceAttr(
-						"openstack_workflow_cron_trigger_v2.cron_trigger_1", "workflow_input", "0 5 * * *"),
-					resource.TestCheckResourceAttr(
-						"openstack_workflow_cron_trigger_v2.cron_trigger_1", "remaining_executions", "0"),
-					resource.TestCheckResourceAttr(
-						"openstack_workflow_cron_trigger_v2.cron_trigger_1", "first_execution_time", "2022-01-01 01:01:01"),
+						"openstack_workflow_cron_trigger_v2.cron_trigger_1", "workflow_input.%", "2"),
 					resource.TestCheckResourceAttrSet(
 						"openstack_workflow_cron_trigger_v2.cron_trigger_1", "project_id"),
 					resource.TestCheckResourceAttrSet(

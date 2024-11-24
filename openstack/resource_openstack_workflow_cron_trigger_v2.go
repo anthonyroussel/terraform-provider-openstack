@@ -2,6 +2,7 @@ package openstack
 
 import (
 	"context"
+	"time"
 
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
@@ -26,30 +27,45 @@ func resourceWorkflowCronTriggerV2() *schema.Resource {
 				Computed: true,
 				ForceNew: true,
 			},
+
 			"name": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
+
 			"workflow_id": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
 			},
+
 			"workflow_input": {
 				Type:     schema.TypeMap,
 				Optional: true,
 				ForceNew: true,
 			},
+
 			"workflow_params": {
 				Type:     schema.TypeMap,
 				Optional: true,
 				ForceNew: true,
 			},
+
 			"pattern": {
 				Type:     schema.TypeString,
 				Required: true,
 				ForceNew: true,
+			},
+
+			"project_id": {
+				Type:     schema.TypeString,
+				Computed: true,
+			},
+
+			"created_at": {
+				Type:     schema.TypeString,
+				Computed: true,
 			},
 		},
 	}
@@ -85,6 +101,7 @@ func resourceWorkflowCronTriggerV2Create(ctx context.Context, d *schema.Resource
 	d.Set("workflow_input", d.Get("workflow_input").(map[string]any))
 	d.Set("workflow_params", d.Get("workflow_params").(map[string]any))
 	d.Set("pattern", d.Get("pattern").(string))
+	d.Set("project_id", d.Get("project_id").(string))
 
 	return resourceWorkflowCronTriggerV2Read(ctx, d, meta)
 }
@@ -112,6 +129,14 @@ func resourceWorkflowCronTriggerV2Read(ctx context.Context, d *schema.ResourceDa
 	d.Set("workflow_input", crontrigger.WorkflowInput)
 	d.Set("workflow_params", crontrigger.WorkflowParams)
 	d.Set("pattern", crontrigger.Pattern)
+	d.Set("project_id", crontrigger.ProjectID)
+
+	if err := d.Set("created_at", crontrigger.CreatedAt.Format(time.RFC3339)); err != nil {
+		tflog.Debug(ctx, "Unable to set created_at for openstack_workflow_cron_trigger_v2", map[string]interface{}{
+			"id":  crontrigger.ID,
+			"err": err,
+		})
+	}
 
 	return nil
 }
