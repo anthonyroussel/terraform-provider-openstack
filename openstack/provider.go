@@ -312,6 +312,7 @@ func Provider() *schema.Provider {
 			"openstack_keymanager_secret_v1":                     dataSourceKeyManagerSecretV1(),
 			"openstack_keymanager_container_v1":                  dataSourceKeyManagerContainerV1(),
 			"openstack_loadbalancer_flavor_v2":                   dataSourceLBFlavorV2(),
+			"openstack_workflow_cron_trigger_v2":                 dataSourceWorkflowCronTriggerV2(),
 			"openstack_workflow_workflow_v2":                     dataSourceWorkflowWorkflowV2(),
 		},
 
@@ -413,6 +414,7 @@ func Provider() *schema.Provider {
 			"openstack_bgpvpn_network_associate_v2":              resourceBGPVPNNetworkAssociateV2(),
 			"openstack_bgpvpn_router_associate_v2":               resourceBGPVPNRouterAssociateV2(),
 			"openstack_bgpvpn_port_associate_v2":                 resourceBGPVPNPortAssociateV2(),
+			"openstack_workflow_cron_trigger_v2":                 resourceWorkflowCronTriggerV2(),
 		},
 	}
 
