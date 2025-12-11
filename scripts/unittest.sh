@@ -39,11 +39,11 @@ for unit_test in "${UNIT_TESTS[@]}"; do
 done
 
 # Run tests under openstack/internal
-UNIT_TESTS=$(go test ./openstack/internal/pathorcontents -v -list 'Unit' | grep -i "Unit")
+UNIT_TESTS=$(go test ./openstack/internal/... -v -list 'Unit' | grep -i "Unit")
 UNIT_TESTS=($UNIT_TESTS)
 
 for unit_test in "${UNIT_TESTS[@]}"; do
-  go test ./openstack/internal/pathorcontents  -v -count=5 -run $(echo "$unit_test" | tr " " "|")
+  go test ./openstack/internal/... -v -count=5 -run $(echo "$unit_test" | tr " " "|")
   # Check the error code after each suite, but do not exit early if a suite failed.
   if [[ $? != 0 ]]; then
     failed=1
