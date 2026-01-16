@@ -506,6 +506,7 @@ func Provider() *schema.Provider {
 			"openstack_bgpvpn_router_associate_v2":               resourceBGPVPNRouterAssociateV2(),
 			"openstack_bgpvpn_port_associate_v2":                 resourceBGPVPNPortAssociateV2(),
 			"openstack_workflow_cron_trigger_v2":                 resourceWorkflowCronTriggerV2(),
+			"openstack_workflow_workflow_v2":                     resourceWorkflowWorkflowV2(),
 		},
 	}
 
