@@ -179,6 +179,7 @@ func Provider() *schema.Provider {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OS_ENDPOINT_TYPE", ""),
+				Description: consts.EndpointType,
 			},
 
 			"cacert_file": {
