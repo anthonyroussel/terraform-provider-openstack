@@ -138,6 +138,9 @@ linters:
           - gochecknoinits
           - gochecknoglobals
           - dupl
+      - path: openstack/version/version.go
+        linters:
+          - gochecknoglobals
   settings:
     depguard:
       rules:

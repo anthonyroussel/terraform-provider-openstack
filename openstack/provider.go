@@ -9,11 +9,10 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/terraform-provider-openstack/terraform-provider-openstack/v3/openstack/version"
 	"github.com/terraform-provider-openstack/utils/v2/auth"
 	"github.com/terraform-provider-openstack/utils/v2/mutexkv"
 )
-
-var version = "dev"
 
 // Use openstackbase.Config as the base/foundation of this provider's
 // Config struct.
@@ -520,7 +519,7 @@ func Provider() *schema.Provider {
 func getSDKVersion() string {
 	buildInfo, ok := debug.ReadBuildInfo()
 	if !ok {
-		return version
+		return version.Version
 	}
 
 	for _, v := range buildInfo.Deps {
@@ -529,7 +528,7 @@ func getSDKVersion() string {
 		}
 	}
 
-	return version
+	return version.Version
 }
 
 func configureProvider(ctx context.Context, provider *schema.Provider, d *schema.ResourceData) (any, diag.Diagnostics) {
@@ -593,7 +592,7 @@ func configureProvider(ctx context.Context, provider *schema.Provider, d *schema
 			MaxRetries:                  d.Get("max_retries").(int),
 			DisableNoCacheHeader:        d.Get("disable_no_cache_header").(bool),
 			TerraformVersion:            terraformVersion,
-			SDKVersion:                  getSDKVersion() + " Terraform Provider OpenStack/" + version,
+			SDKVersion:                  getSDKVersion() + " Terraform Provider OpenStack/" + version.Version,
 			MutexKV:                     mutexkv.NewMutexKV(),
 			EnableLogger:                enableLogging,
 		},

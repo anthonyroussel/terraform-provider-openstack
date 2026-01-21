@@ -12,19 +12,18 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/provider/schema"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/terraform-provider-openstack/terraform-provider-openstack/v3/openstack/version"
 )
 
 var _ provider.Provider = &OpenStackProvider{}
 
-type OpenStackProvider struct {
-	Version string
-}
+type OpenStackProvider struct{}
 
 type OpenStackProviderModel struct {
 	Endpoint types.String `tfsdk:"endpoint"`
 }
 
-func New(version string) func() provider.Provider {
+func New() func() provider.Provider {
 	return func() provider.Provider {
 		return &OpenStackProvider{}
 	}
@@ -32,7 +31,7 @@ func New(version string) func() provider.Provider {
 
 func (p *OpenStackProvider) Metadata(_ context.Context, _ provider.MetadataRequest, resp *provider.MetadataResponse) {
 	resp.TypeName = "openstack"
-	resp.Version = p.Version
+	resp.Version = version.Version
 }
 
 func (p *OpenStackProvider) Schema(_ context.Context, _ provider.SchemaRequest, resp *provider.SchemaResponse) {
