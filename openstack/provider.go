@@ -9,6 +9,7 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/diag"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/logging"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
+	"github.com/terraform-provider-openstack/terraform-provider-openstack/v3/openstack/internal/consts"
 	"github.com/terraform-provider-openstack/terraform-provider-openstack/v3/openstack/version"
 	"github.com/terraform-provider-openstack/utils/v2/auth"
 	"github.com/terraform-provider-openstack/utils/v2/mutexkv"
@@ -22,91 +23,19 @@ type Config struct {
 
 // Provider returns a schema.Provider for OpenStack.
 func Provider() *schema.Provider {
-	descriptions := map[string]string{
-		"auth_url": "The Identity authentication URL.",
-
-		"cloud": "An entry in a `clouds.yaml` file to use.",
-
-		"region": "The OpenStack region to connect to.",
-
-		"user_name": "Username to login with.",
-
-		"user_id": "User ID to login with.",
-
-		"application_credential_id": "Application Credential ID to login with.",
-
-		"application_credential_name": "Application Credential name to login with.",
-
-		"application_credential_secret": "Application Credential secret to login with.",
-
-		"tenant_id": "The ID of the Tenant (Identity v2) or Project (Identity v3)\n" +
-			"to login with.",
-
-		"tenant_name": "The name of the Tenant (Identity v2) or Project (Identity v3)\n" +
-			"to login with.",
-
-		"password": "Password to login with.",
-
-		"token": "Authentication token to use as an alternative to username/password.",
-
-		"user_domain_name": "The name of the domain where the user resides (Identity v3).",
-
-		"user_domain_id": "The ID of the domain where the user resides (Identity v3).",
-
-		"project_domain_name": "The name of the domain where the project resides (Identity v3).",
-
-		"project_domain_id": "The ID of the domain where the proejct resides (Identity v3).",
-
-		"domain_id": "The ID of the Domain to scope to (Identity v3).",
-
-		"domain_name": "The name of the Domain to scope to (Identity v3).",
-
-		"default_domain": "The name of the Domain ID to scope to if no other domain is specified. Defaults to `default` (Identity v3).",
-
-		"system_scope": "If set to `true`, system scoped authorization will be enabled. Defaults to `false` (Identity v3).",
-
-		"insecure": "Trust self-signed certificates.",
-
-		"cacert_file": "A Custom CA certificate.",
-
-		"cert": "A client certificate to authenticate with.",
-
-		"key": "A client private key to authenticate with.",
-
-		"endpoint_type": "The catalog endpoint type to use.",
-
-		"endpoint_overrides": "A map of services with an endpoint to override what was\n" +
-			"from the Keystone catalog",
-
-		"swauth": "Use Swift's authentication system instead of Keystone. Only used for\n" +
-			"interaction with Swift.",
-
-		"disable_no_cache_header": "If set to `true`, the HTTP `Cache-Control: no-cache` header will not be added by default to all API requests.",
-
-		"delayed_auth": "If set to `false`, OpenStack authorization will be perfomed,\n" +
-			"every time the service provider client is called. Defaults to `true`.",
-
-		"allow_reauth": "If set to `false`, OpenStack authorization won't be perfomed\n" +
-			"automatically, if the initial auth token get expired. Defaults to `true`",
-
-		"max_retries": "How many times HTTP connection should be retried until giving up.",
-
-		"enable_logging": "Outputs very verbose logs with all calls made to and responses from OpenStack",
-	}
-
 	provider := &schema.Provider{
 		Schema: map[string]*schema.Schema{
 			"auth_url": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OS_AUTH_URL", ""),
-				Description: descriptions["auth_url"],
+				Description: consts.AuthURL,
 			},
 
 			"region": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: descriptions["region"],
+				Description: consts.Region,
 				DefaultFunc: schema.EnvDefaultFunc("OS_REGION_NAME", ""),
 			},
 
@@ -114,35 +43,35 @@ func Provider() *schema.Provider {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OS_USERNAME", ""),
-				Description: descriptions["user_name"],
+				Description: consts.UserName,
 			},
 
 			"user_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OS_USER_ID", ""),
-				Description: descriptions["user_id"],
+				Description: consts.UserID,
 			},
 
 			"application_credential_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OS_APPLICATION_CREDENTIAL_ID", ""),
-				Description: descriptions["application_credential_id"],
+				Description: consts.ApplicationCredentialID,
 			},
 
 			"application_credential_name": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OS_APPLICATION_CREDENTIAL_NAME", ""),
-				Description: descriptions["application_credential_name"],
+				Description: consts.ApplicationCredentialName,
 			},
 
 			"application_credential_secret": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OS_APPLICATION_CREDENTIAL_SECRET", ""),
-				Description: descriptions["application_credential_secret"],
+				Description: consts.ApplicationCredentialSecret,
 			},
 
 			"tenant_id": {
@@ -152,7 +81,7 @@ func Provider() *schema.Provider {
 					"OS_TENANT_ID",
 					"OS_PROJECT_ID",
 				}, ""),
-				Description: descriptions["tenant_id"],
+				Description: consts.TenantID,
 			},
 
 			"tenant_name": {
@@ -162,7 +91,7 @@ func Provider() *schema.Provider {
 					"OS_TENANT_NAME",
 					"OS_PROJECT_NAME",
 				}, ""),
-				Description: descriptions["tenant_name"],
+				Description: consts.TenantName,
 			},
 
 			"password": {
@@ -170,7 +99,7 @@ func Provider() *schema.Provider {
 				Optional:    true,
 				Sensitive:   true,
 				DefaultFunc: schema.EnvDefaultFunc("OS_PASSWORD", ""),
-				Description: descriptions["password"],
+				Description: consts.Password,
 			},
 
 			"token": {
@@ -180,70 +109,70 @@ func Provider() *schema.Provider {
 					"OS_TOKEN",
 					"OS_AUTH_TOKEN",
 				}, ""),
-				Description: descriptions["token"],
+				Description: consts.Token,
 			},
 
 			"user_domain_name": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OS_USER_DOMAIN_NAME", ""),
-				Description: descriptions["user_domain_name"],
+				Description: consts.UserDomainName,
 			},
 
 			"user_domain_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OS_USER_DOMAIN_ID", ""),
-				Description: descriptions["user_domain_id"],
+				Description: consts.UserDomainID,
 			},
 
 			"project_domain_name": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OS_PROJECT_DOMAIN_NAME", ""),
-				Description: descriptions["project_domain_name"],
+				Description: consts.ProjectDomainName,
 			},
 
 			"project_domain_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OS_PROJECT_DOMAIN_ID", ""),
-				Description: descriptions["project_domain_id"],
+				Description: consts.ProjectDomainID,
 			},
 
 			"domain_id": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OS_DOMAIN_ID", ""),
-				Description: descriptions["domain_id"],
+				Description: consts.DomainID,
 			},
 
 			"domain_name": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OS_DOMAIN_NAME", ""),
-				Description: descriptions["domain_name"],
+				Description: consts.DomainName,
 			},
 
 			"default_domain": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OS_DEFAULT_DOMAIN", "default"),
-				Description: descriptions["default_domain"],
+				Description: consts.DefaultDomain,
 			},
 
 			"system_scope": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OS_SYSTEM_SCOPE", false),
-				Description: descriptions["system_scope"],
+				Description: consts.SystemScope,
 			},
 
 			"insecure": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OS_INSECURE", nil),
-				Description: descriptions["insecure"],
+				Description: consts.Insecure,
 			},
 
 			"endpoint_type": {
@@ -256,76 +185,76 @@ func Provider() *schema.Provider {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OS_CACERT", ""),
-				Description: descriptions["cacert_file"],
+				Description: consts.CACertFile,
 			},
 
 			"cert": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OS_CERT", ""),
-				Description: descriptions["cert"],
+				Description: consts.Cert,
 			},
 
 			"key": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OS_KEY", ""),
-				Description: descriptions["key"],
+				Description: consts.Key,
 			},
 
 			"swauth": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OS_SWAUTH", false),
-				Description: descriptions["swauth"],
+				Description: consts.Swauth,
 			},
 
 			"delayed_auth": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OS_DELAYED_AUTH", true),
-				Description: descriptions["delayed_auth"],
+				Description: consts.DelayedAuth,
 			},
 
 			"allow_reauth": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OS_ALLOW_REAUTH", true),
-				Description: descriptions["allow_reauth"],
+				Description: consts.AllowReauth,
 			},
 
 			"cloud": {
 				Type:        schema.TypeString,
 				Optional:    true,
 				DefaultFunc: schema.EnvDefaultFunc("OS_CLOUD", ""),
-				Description: descriptions["cloud"],
+				Description: consts.Cloud,
 			},
 
 			"max_retries": {
 				Type:        schema.TypeInt,
 				Optional:    true,
 				Default:     0,
-				Description: descriptions["max_retries"],
+				Description: consts.MaxRetries,
 			},
 
 			"endpoint_overrides": {
 				Type:        schema.TypeMap,
 				Optional:    true,
-				Description: descriptions["endpoint_overrides"],
+				Description: consts.EndpointOverrides,
 			},
 
 			"disable_no_cache_header": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
-				Description: descriptions["disable_no_cache_header"],
+				Description: consts.DisableNoCacheHeader,
 			},
 
 			"enable_logging": {
 				Type:        schema.TypeBool,
 				Optional:    true,
 				Default:     false,
-				Description: descriptions["enable_logging"],
+				Description: consts.EnableLogging,
 			},
 		},
 
