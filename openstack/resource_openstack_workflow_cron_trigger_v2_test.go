@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"os"
 	"testing"
 
 	"github.com/gophercloud/gophercloud/v2/openstack/workflow/v2/crontriggers"
@@ -13,18 +12,6 @@ import (
 )
 
 func TestAccWorkflowV2CronTrigger_basic(t *testing.T) {
-	var workflowID string
-
-	if os.Getenv("TF_ACC") != "" {
-		workflow, err := testAccWorkflowV2WorkflowCreate(t.Context())
-		if err != nil {
-			t.Fatal(err)
-		}
-
-		workflowID = workflow.ID
-		defer testAccWorkflowV2WorkflowDelete(t, workflowID)
-	}
-
 	var crontrigger crontriggers.CronTrigger
 
 	resource.Test(t, resource.TestCase{
@@ -37,7 +24,7 @@ func TestAccWorkflowV2CronTrigger_basic(t *testing.T) {
 		CheckDestroy:      testAccCheckWorkflowV2CronTriggerDestroy(t.Context()),
 		Steps: []resource.TestStep{
 			{
-				Config: testAccWorkflowV2CronTriggerBasic(workflowID),
+				Config: testAccWorkflowV2CronTriggerBasic,
 				Check: resource.ComposeTestCheckFunc(
 					testAccCheckWorkflowV2CronTriggerExists(t.Context(),
 						"openstack_workflow_cron_trigger_v2.cron_trigger_1", &crontrigger),
@@ -45,8 +32,8 @@ func TestAccWorkflowV2CronTrigger_basic(t *testing.T) {
 						"openstack_workflow_cron_trigger_v2.cron_trigger_1", "id"),
 					resource.TestCheckResourceAttr(
 						"openstack_workflow_cron_trigger_v2.cron_trigger_1", "name", "hello_cron_trigger"),
-					resource.TestCheckResourceAttr(
-						"openstack_workflow_cron_trigger_v2.cron_trigger_1", "workflow_id", workflowID),
+					resource.TestCheckResourceAttrSet(
+						"openstack_workflow_cron_trigger_v2.cron_trigger_1", "workflow_id"),
 					resource.TestCheckResourceAttr(
 						"openstack_workflow_cron_trigger_v2.cron_trigger_1", "pattern", "0 5 * * *"),
 					resource.TestCheckResourceAttr(
@@ -118,21 +105,43 @@ func testAccCheckWorkflowV2CronTriggerExists(ctx context.Context, n string, cron
 	}
 }
 
-func testAccWorkflowV2CronTriggerBasic(workflowID string) string {
-	return fmt.Sprintf(`
+const testAccWorkflowV2CronTriggerBasic = `
+resource "openstack_workflow_workflow_v2" "workflow_1" {
+	namespace = "my_namespace"
+	scope     = "private"
+	definition = <<EOF
+    version: '2.0'
+
+    hello_workflow:
+      description: Simple echo example
+
+      input:
+        - message
+
+      tags:
+        - echo
+
+      tasks:
+        echo:
+          action: std.echo
+          input:
+            output:
+              my_message: <% $.message %>
+	EOF
+}
+
 resource "openstack_workflow_cron_trigger_v2" "cron_trigger_1" {
-  name        = "hello_cron_trigger"
-  workflow_id = "%s"
-  pattern     = "0 5 * * *"
+	name        = "hello_cron_trigger"
+	workflow_id = openstack_workflow_workflow_v2.workflow_1.id
+	pattern     = "0 5 * * *"
 
-  workflow_input = {
-    message = "Hello, OpenStack!"
-  }
+	workflow_input = {
+		message = "Hello, OpenStack!"
+	}
 
-  workflow_params = {
-    priority = "high"
-    notify   = "mistral@openstack.org"
-  }
+	workflow_params = {
+		priority = "high"
+		notify   = "mistral@openstack.org"
+	}
 }
-`, workflowID)
-}
+`
